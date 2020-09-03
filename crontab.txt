@@ -1,7 +1,2 @@
-* * * * * (sleep 55; cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
-* * * * * (sleep 45; cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
-* * * * * (sleep 35; cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
-* * * * * (sleep 25; cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
-* * * * * (sleep 15; cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
-* * * * * (sleep 5; cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
 * * * * * (cd /Users/doug/bin; ./kvm-check.sh > check.log 2>&1)
+30 * * * * rm /Users/doug/bin/check.log

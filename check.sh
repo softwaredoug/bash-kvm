@@ -18,22 +18,34 @@ IFS=$'\r\n' GLOBIGNORE='*' command eval  'BT_DEVICES=($(cat devices.txt))'
 # Where can ioreg and blueutil be found?
 export PATH="/usr/local/bin/:/usr/sbin/:$PATH"
 
-if [[ $(ioreg -p IOUSB) =~ "$USB_DEVICE_NAME" ]]; then
-    echo "Docked!"
-    for i in ${BT_DEVICES[@]}; do
-        CONN="$(blueutil --is-connected $i)"
-        echo "CONN? $CONN"
-        if [ $CONN == "0" ]; then
-            echo "Connecting $i"
-            blueutil --connect "$i"
-        else
-            echo "Already Connected $i, doing nothing..."
-        fi
-    done
+if test -f /tmp/kvm.txt; then
+    echo "KVM already running, quiting"
 else
-    echo "Webcam Not Plugged In"
-    for i in ${BT_DEVICES[@]}; do
-        echo "Disconnecting $i"
-        blueutil --disconnect "$i"
-    done
+    touch /tmp/kvm.txt
+    if [[ $(ioreg -p IOUSB) =~ "$USB_DEVICE_NAME" ]]; then
+        echo "Docked!"
+        for i in ${BT_DEVICES[@]}; do
+            CONN="$(blueutil --is-connected $i)"
+            echo "CONN? $CONN"
+            if [ $CONN == "0" ]; then
+                echo "Connecting $i"
+                #blueutil --wait-connect "$i" 20
+            else
+                echo "Already Connected $i, doing nothing..."
+            fi
+        done
+    else
+        echo "Webcam Not Plugged In"
+        for i in ${BT_DEVICES[@]}; do
+            CONN="$(blueutil --is-connected $i)"
+            echo "CONN? $CONN"
+            if [ $CONN == "1" ]; then
+                echo "Disconnecting $i"
+                blueutil --disconnect "$i"
+            else
+                echo "Already Disconnected $i, doing nothing..."
+            fi
+        done
+    fi
+    rm /tmp/kvm.txt
 fi
